@@ -23,33 +23,13 @@ function Intership() {
                   <div className="products-actions d-flex p-4">
                     <div className="imort-product ">
                       <div className="btn-product d-flex">
-                        <div className="imp-btn">
-                          <button className="p-btn-2 btn-md">
-                            <BiExport />
-                            <span className="px-1">Export</span>
-                          </button>
-                        </div>
-                        <div className="exp-btn px-3">
-                          <button className="p-btn">
-                            <BiImport />
-                            <span className="px-1">Import</span>
-                          </button>
-                        </div>
+                       
                       </div>
                     </div>
                     <div className="action-btn">
                       <div className="actions d-flex">
                         <div className="Bulk-btn">
-                          <button
-                            className="bulk-btn"
-                            type="button"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasRight"
-                            aria-controls="offcanvasRight"
-                          >
-                            <FiEdit />
-                            <span className="px-1">Bulk Action</span>
-                          </button>
+                          
 
                           <div
                             className="offcanvas offcanvas-end"
@@ -254,14 +234,7 @@ function Intership() {
                           </div>
                         </div>
                         <div className="Del-btn px-3">
-                          <button
-                            className="del-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
-                          >
-                            <RiDeleteBinLine />
-                            <span className="px-1">Delete</span>
-                          </button>
+                          
                         </div>
                         {/* Modal-Del */}
                         <div
@@ -322,7 +295,7 @@ function Intership() {
                           aria-controls="offcanvasRight"
                         >
                           <AiOutlinePlus />
-                          <span className="px-1"> Add Products</span>
+                          <span className="px-1"> Add Jobs</span>
                         </button>
                         <div
                           className="offcanvas offcanvas-end w-75"
@@ -656,7 +629,7 @@ function Intership() {
                           <th>Title</th>
                           <th>Features</th>
                        
-                          <th>Sort Order</th>
+                   
 
                           <th>Status</th>
                           <th>Action</th>
@@ -694,7 +667,6 @@ function Intership() {
                           </td>
                         
 
-                          <td><input id="orderid4" type="text" name="orderid4" value="1" class="form-control" size="3"/></td>
                           <td>
                             <span
                               className="text-ligh  "
@@ -723,58 +695,7 @@ function Intership() {
                         </tr>
                       </tbody>
                     </table>
-                    <div className="data-pagination px-4 d-flex">
-                      <p>SHOWING 41-60 OF 308</p>
-
-                      <nav aria-label="Page navigation example">
-                        <ul className="pagination">
-                          <li className="page-item">
-                            <a
-                              className="page-link"
-                              href="#"
-                              aria-label="Previous"
-                            >
-                              <span aria-hidden="true">«</span>
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a className="page-link" href="#">
-                              1
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a className="page-link" href="#">
-                              2
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a className="page-link" href="#">
-                              3
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a className="page-link" href="#">
-                              4
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a className="page-link" href="#">
-                              5
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a className="page-link" href="#">
-                              6
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a className="page-link" href="#" aria-label="Next">
-                              <span aria-hidden="true">»</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </nav>
-                    </div>
+                 
                   </div>
                 </div>
               </div>

@@ -1,66 +1,241 @@
-import React from "react";
-import ScrollableSection from "../Dashboard/Dashbord";
-import Nav from "../../../components/Nav";
-
+import React,{useState,useEffect} from "react";
 import { BiImport } from "react-icons/bi";
 import { BiExport } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { AiOutlinePlus } from "react-icons/ai";
-import { AiOutlineZoomIn } from "react-icons/ai";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
+
+import {Modal} from "antd";
+import ApiUrl from "../BaseUrl";
+
 
 function ProductCategory() {
+
+  let hello = "";
+
+
+  
+
+
+  const [stocks, setStocks] = useState([]);
+  const [sellerid, setSellerID] = useState(null);
+
+
+  const [singleStock, setSingleStock] = useState();
+  
+  useEffect(() => {
+
+
+    axios.get(`${ApiUrl}/category/getAll`).then((res) => {
+      console.log(res.data);
+      setStocks([...res.data]);
+      console.log(stocks);
+
+      
+    });
+    
+    
+  }, []);
+
+
+
+
+  const sendData = (values) => {
+
+  
+
+    if (values?.title?.value?.length === 0) {
+
+      toast('please Enter your title')
+    
+    } 
+
+    else if  (values?.ambassadorCommission?.value?.length===0){
+      toast('please Enter your ambassador commission')
+    }
+
+    else if (values?.adminCommission?.value?.length===0){
+      toast('please Enter your adminCommission')
+    }
+    else if(values?.status?.value?.length===0){
+      toast('please Enter your status')
+    }
+    
+    
+    else {
+    
+
+      const params = {
+
+     "title":values.title.value,
+     "ambassadorCommission":values.ambassadorCommission.value,
+      "adminCommission":values.adminCommission.value,
+      "status":values.status.value,
+
+      }
+      axios
+        .post(`${ApiUrl}/category/create`, params)
+
+        .then((res) => {
+          console.log(res.data);
+
+
+            
+          if (res.data.status === "success") {
+
+             
+            
+            toast(" category created successfully!");
+
+
+            axios.get(`${ApiUrl}/category/getAll`).then((res) => {
+              console.log(res.data);
+              setStocks([...res.data]);
+              console.log(stocks);
+        
+              
+            });
+
+
+          }
+
+          
+
+
+          
+    // axios.get(`${ApiUrl}/e-stock/getByStoreID?id=`+id).then((res) => {
+    //   console.log(res.data);
+    //   setStocks([...res.data]);
+    //   console.log(stocks);
+
+      
+    // });
+
+
+        });
+    }
+  };
+
+  const updateData = (values) => {
+
+  
+    
+
+    const params = {
+      "id":sellerid,   
+      "title":values.title.value,
+      "ambassadorCommission":values.ambassadorCommission.value,
+       "adminCommission":values.adminCommission.value,
+       "status":values.status.value,
+ 
+       }
+
+      axios
+        .put(`${ApiUrl}/category/updateByID`, params)
+
+        .then((res) => {
+          console.log(res.data);
+
+            
+          if (res.data.status === "success") {
+
+            
+            document.getElementById('myclosebtn').click();
+            document.getElementById('myclosebtn').disabled=true;
+
+            // const button = document.getElementById("myclosebtn");
+
+            // Define a click event handler function
+            
+            toast("category update successfully!");
+
+
+          
+          }
+
+
+          
+   
+        });
+    
+  };
+
+
+  const onDeleteStudent = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete?",
+      onOk: () => {
+        axios
+          .delete(
+            `${ApiUrl}/category/deleteByID?id=`+id
+          )
+          .then((res) => {
+            console.log(
+              res.data
+
+              
+            );
+
+            
+
+            toast(
+              "Category deleted successfully!"
+            );
+
+
+
+            axios.get(`${ApiUrl}/category/getAll`).then((res) => {
+              console.log(res.data);
+              setStocks([...res.data]);
+              console.log(stocks);
+        
+              
+            });
+
+
+
+
+   
+
+          });
+      },
+    });
+  };
+
+
   return (
     <>
       <div>
         <header>
           <div className="bg-theme">
+            <ToastContainer/>
             <div className="main-wrapper">
               <div className="container py-4">
                 <h5 className="kk ps-3"> Manage Product Categories</h5>
                
 
-                <div className="min-box  border">
-                  <div className="products-actions d-flex p-4">
+                <div className="j">
+                  <div className="products-actions d-flex p-1">
                     <div className="imort-product ">
                       <div className="btn-product d-flex">
                         <div className="imp-btn">
-                          <button className="p-btn-2">
-                            <BiExport />
-                            <span className="px-1">Export</span>
-                          </button>
+                 
                         </div>
                         <div className="exp-btn px-3">
-                          <button className="p-btn">
-                            <BiImport />
-                            <span className="px-1">Import</span>
-                          </button>
+                         
                         </div>
                       </div>
                     </div>
                     <div className="action-btn">
                       <div className="actions d-flex">
                         <div className="Bulk-btn">
-                          <button
-                            className="bulk-btn"
-                            type="button"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasRight"
-                            aria-controls="offcanvasRight"
-                          >
-                            <FiEdit />
-                            <span className="px-1">Bulk Action</span>
-                          </button>
+                     
                         </div>
                         <div className="Del-btn px-3">
-                          <button
-                            className="del-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
-                          >
-                            <RiDeleteBinLine />
-                            <span className="px-1">Delete</span>
-                          </button>
+                        
                         </div>
                         <button
                           className="add-btn"
@@ -70,58 +245,9 @@ function ProductCategory() {
                           aria-controls="offcanvasRight"
                         >
                           <AiOutlinePlus />
-                          <span className="px-1"> Add Products</span>
+                          <span className="px-1"> Add Category</span>
                         </button>
-                        {/* Modal-Del */}
-                        <div
-                          class="modal fade"
-                          id="exampleModal"
-                          tabindex="-1"
-                          aria-labelledby="exampleModalLabel"
-                          aria-hidden="true"
-                        >
-                          <div class="modal-dialog">
-                            <div class="modal-content py-4">
-                              <div class="modal-body">
-                                <div className="modal-icon">
-                                  <span
-                                    style={{ fontSize: 35, color: "#f05252" }}
-                                    className="px-3"
-                                  >
-                                    <RiDeleteBinLine />
-                                  </span>
-                                </div>
-                                <h1 class="title py-3">
-                                  Are You Sure! Want to Delete{" "}
-                                  <span style={{ color: "#f05252" }}>
-                                    Selected Products?
-                                  </span>
-                                </h1>
-                                <p className="para">
-                                  Do you really want to delete these records?
-                                  You can't view this in <br /> your list
-                                  anymore if you delete!
-                                </p>
-                                ...
-                                <div className="last-btn">
-                                  <button
-                                    type="button"
-                                    class="btn  btn-light mx-4 py-2 px-4"
-                                    data-bs-dismiss="modal"
-                                  >
-                                    No,Keep It
-                                  </button>
-                                  <button
-                                    type="button"
-                                    class="btn btn-success py-2 px-4"
-                                  >
-                                    Yes, Delete It
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                       
 
                         <div
                           className="offcanvas offcanvas-end"
@@ -154,7 +280,7 @@ function ProductCategory() {
                           <div className="offcanvas-body p-0">
                             <div className="form-data">
                               <div className="wrap-data p-5">
-                                <form>
+                                <form onSubmit={(e)=>{e.preventDefault(); sendData(e.target)}} >
                               
                                 <div className="row pt-4  align-items-center">
                                     <div className="col-md-4">
@@ -167,10 +293,50 @@ function ProductCategory() {
                                     <div className="col-md-8">
                                       <input
                                         type="text"
-                                        id="inputPassword6"
+                                        name="title"
+                                        
+                                        className="form-control-input"
+                                       
+                                        placeholder="Category Title"
+                                      />
+                                    </div>
+                                  </div>
+                                <div className="row pt-4  align-items-center">
+                                    <div className="col-md-4">
+                                      <label
+                                        for="inputPassword6"
+                                        className="form-label"
+                                      >
+                                      Ambassador Commission 
+                                      </label>
+                                    </div>
+                                    <div className="col-md-8">
+                                      <input
+                                        type="text"
+                                        name="ambassadorCommission"
+                                      
                                         className="form-control-input"
                                         aria-labelledby="passwordHelpInline"
-                                        placeholder="Category Title"
+                                        placeholder="Enter Ambassador Commission"
+                                      />
+                                    </div>
+                                  </div>
+                                <div className="row pt-4  align-items-center">
+                                    <div className="col-md-4">
+                                      <label
+                                        for="inputPassword6"
+                                        className="form-label"
+                                      >    Admin Commission 
+                                      </label>
+                                    </div>
+                                    <div className="col-md-8">
+                                      <input
+                                        type="text"
+                                        id="inputPassword6"
+                                        name="adminCommission"
+                                        className="form-control-input"
+                                        aria-labelledby="passwordHelpInline"
+                                        placeholder="Enter Admin Commission"
                                       />
                                     </div>
                                   </div>
@@ -188,23 +354,18 @@ function ProductCategory() {
                                     </div>
                                     <div className="col-md-8">
                                       <select
+                                      name="status"
                                         class="form-control-input-2"
                                         aria-label="Default select example"
                                       >
-                                        <option value="1">Active</option>
-                                        <option value="1">Inactive</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
                                       </select>
                                     </div>
                                   </div>
 
 
-                                  
-                               
-                                </form>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="offcanvas-footer px-5 py-3">
+                                  <div className="offcanvas-footer px-5 py-3">
                             <div className="content-footer">
                               <div className="row">
                                 <div className="col-lg-6 col-md-12 py-3">
@@ -216,16 +377,185 @@ function ProductCategory() {
                                   </button>
                                 </div>
                                 <div className="col-lg-6 col-md-12 py-3">
-                                  <button
-                                    type="button"
+                                <button
+                                    type="submit"
                                     class="add-last-btn btn-lg"
+                                      data-bs-dismiss="offcanvas"
                                   >
-                                    Save
+                                     Add Category
                                   </button>
                                 </div>
                               </div>
                             </div>
                           </div>
+                               
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Canvas */}
+                        </div>
+                        <div
+                          className="offcanvas offcanvas-end"
+                          tabIndex={-1}
+                          id="offcanvasRightupdate"
+                          aria-labelledby="offcanvasRightLabel"
+                        >
+                          <div className="offcanvas-header px-4">
+                            <div className="content-header">
+                              <h4>Manage Product Category  Update</h4>
+                              <p>
+                                Update products info, combinations and extras.
+                              </p>
+                            </div>
+
+                            <button
+                              type="button"
+                              className="btn-close bg-white shadow rounded-5 text-reset"
+                              data-bs-dismiss="offcanvas"
+                              aria-label="Close"
+                              style={{
+                                width: "5px",
+                                height: "30px",
+                                opacity: "0.8",
+                                fontSize: "12px",
+                              }}
+                            />
+                          </div>
+                          {/* Canvas */}
+                          <div className="offcanvas-body p-0">
+                            <div className="form-data">
+                              <div className="wrap-data p-5">
+                                <form onSubmit={(e)=>{e.preventDefault(); updateData(e.target)}} >
+                              
+                                <div className="row pt-4  align-items-center">
+                                    <div className="col-md-4">
+                                      <label
+                                        for="inputPassword6"
+                                        className="form-label"
+                                      >   Category Title
+                                      </label>
+                                    </div>
+                                    <div className="col-md-8">
+                                      <input
+                                        type="text"
+                                        name="title"
+                                        
+                                        className="form-control-input"
+                                       
+                                        placeholder="Category Title"
+                                        defaultValue={singleStock?.title}
+                                      />
+                                    </div>
+                                  </div>
+                                <div className="row pt-4  align-items-center">
+                                    <div className="col-md-4">
+                                      <label
+                                        for="inputPassword6"
+                                        className="form-label"
+                                      >
+                                      Ambassador Commission 
+                                      </label>
+                                    </div>
+                                    <div className="col-md-8">
+                                      <input
+                                        type="text"
+                                        name="ambassadorCommission"
+                                      
+                                        className="form-control-input"
+                                        aria-labelledby="passwordHelpInline"
+                                        placeholder="Enter Ambassador Commission"
+                                        defaultValue={singleStock?.ambassadorCommission}
+                                      />
+                                    </div>
+                                  </div>
+                                <div className="row pt-4  align-items-center">
+                                    <div className="col-md-4">
+                                      <label
+                                        for="inputPassword6"
+                                        className="form-label"
+                                      >    Admin Commission 
+                                      </label>
+                                    </div>
+                                    <div className="col-md-8">
+                                      <input
+                                        type="text"
+                                        id="inputPassword6"
+                                        name="adminCommission"
+                                        className="form-control-input"
+                                        aria-labelledby="passwordHelpInline"
+                                        placeholder="Enter Admin Commission"
+
+                                        defaultValue={singleStock?.adminCommission}
+                                      />
+                                    </div>
+                                  </div>
+                               
+                                  
+
+                                  <div className="row  pt-4  align-items-center">
+                                    <div className="col-md-4">
+                                      <label
+                                        for="inputPassword6"
+                                        className="form-label"
+                                      >
+                                        Status
+                                      </label>
+                                    </div>
+                                    <div className="col-md-8">
+                                      <select
+                                      name="status"
+                                        class="form-control-input-2"
+                                        aria-label="Default select example"
+
+                                        defaultValue={singleStock?.status}
+                                      >
+                                        <option selected>Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                      </select>
+                                    </div>
+                                  </div>
+
+
+                                  <div className="offcanvas-footer px-5 py-3">
+                            <div className="content-footer">
+                              <div className="row">
+                                <div className="col-lg-6 col-md-12 py-3">
+                                  <button
+                                    type="button"
+                                    class="cancel-btn btn-lg"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                                <div className="col-lg-6 col-md-12 py-3">
+                                <button
+                                    type="submit"
+                                    class="add-last-btn btn-lg"
+                                    data-bs-dismiss="abc"
+                                  >
+                                    Update Category
+                                  </button>
+                                  <button
+                                    style={{ display: "none" }}
+                                    type="submit"
+                                    class="add-last-btn btn-lg"
+                                    id="myclosebtn"
+                                    data-bs-dismiss="offcanvas"
+                                  >
+                                    Update Category
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                               
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                          
                           {/* Canvas */}
                         </div>
                       </div>
@@ -253,24 +583,28 @@ function ProductCategory() {
                           <th>Title</th>
                           <th>Admin Share</th>
                           <th>Ambassador Share</th>
-                          <th>Sort Order</th>
+                        
                           <th>Status</th>
                           <th>ACTIONS</th>
                         </tr>
                       </thead>
                       <tbody>
+
+                      {stocks?.map((item, index) => {
+                              
+                              return (
+                                <>
+
                         <tr>
+                         
+                          <td></td>
                           <td>
-                          1112
+                           {index+1}
                           </td>
-                          
-                          <td>
-                            0.5
-                          </td>
-                          <td>ELECTRONICS</td>
-                          <td>0.5</td>
-                          <td>0.5</td>
-                          <td>625</td>
+                          <td>{item?.title}</td>
+                          <td>{item?.ambassadorCommission}</td>
+                          <td>{item?.adminCommission}</td>
+                        
                           <td>
                             <span
                               className="text-ligh  "
@@ -282,25 +616,71 @@ function ProductCategory() {
                                 padding: "5px 10px",
                               }}
                             >
-                              Active
+                              {item?.status}
                             </span>
                           </td>
 
                           <td>
                             <div className="actions d-flex">
-                              <span style={{ fontSize: 21 }}>
-                                <FiEdit />
-                              </span>
-                              <span style={{ fontSize: 21 }} className="px-3">
+                            <span
+                                      onClick={() => {
+                                        // navigate(`/seller_details/${id}/${item?._id}`);
+                                        setSellerID(item?._id)
+                                            
+                                        
+                                        axios.get(`${ApiUrl}/category/getById?id=`+item?._id).then((res) => {
+                                          console.log(res.data,'singleStock');
+                                    
+                                          setSingleStock(res.data);
+                                        });
+
+
+
+                                      }}
+                                      data-bs-toggle="offcanvas"
+                                      data-bs-target="#offcanvasRightupdate"
+                                      aria-controls="offcanvasRightupdate"
+                                      style={{ fontSize: 21 }}
+                                    >
+                                      <FiEdit />
+                                    </span>
+
+                              <span
+                              
+                                
+
+                              
+                            onClick={() => {
+
+
+                              onDeleteStudent(item?._id);
+                             
+                            }}
+
+
+
+
+
+
+
+                              style={{ fontSize: 21 }} className="px-3">
                                 <RiDeleteBinLine />
                               </span>
                             </div>
                           </td>
                         </tr>
+
+
+                        </>
+                                );
+                             
+                              
+                            })}
+
                       </tbody>
                     </table>
                     <div className="data-pagination px-4 d-flex">
-                      <p>SHOWING 41-60 OF 308</p>
+                      <p>.</p>
 
                       <nav aria-label="Page navigation example">
                         <ul className="pagination">

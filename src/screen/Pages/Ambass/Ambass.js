@@ -1,13 +1,9 @@
 import React from "react";
-import ScrollableSection from "../Dashboard/Dashbord";
-import Nav from "../../../components/Nav";
-
 import { BiImport } from "react-icons/bi";
 import { BiExport } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { AiOutlinePlus } from "react-icons/ai";
-import { AiOutlineZoomIn } from "react-icons/ai";
+
 
 function Ambass() {
   return (

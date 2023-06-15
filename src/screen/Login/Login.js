@@ -53,7 +53,7 @@ const navigation= useNavigate("")
 
           
           toast('Ambassador Login successfully!')
-   
+          localStorage.setItem('ambassadorID',res.data.data._id);
            navigation('/dashboard')
           
         }

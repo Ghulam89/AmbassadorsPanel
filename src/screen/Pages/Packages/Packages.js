@@ -1,36 +1,122 @@
-import React from "react";
-import ScrollableSection from "../Dashboard/Dashbord";
-import Nav from "../../../components/Nav";
-
-import { BiImport } from "react-icons/bi";
-import { BiExport } from "react-icons/bi";
+import React, { useEffect, useState } from "react";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { AiOutlinePlus } from "react-icons/ai";
-import { AiOutlineZoomIn } from "react-icons/ai";
+import ApiUrl from "../BaseUrl";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import {Modal} from "antd";
+function Packages() {
+  const [packages, setPackages] = useState([]);
 
-function Business() {
+  const [packagesSingle, setPackagesSingle] = useState({});
+
+  const [sellerid,setSellerID] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${ApiUrl}/packages/getAll`).then((res) => {
+      console.log(res.data);
+      setPackages(res.data);
+      console.log(packages);
+    });
+  }, []);
+
+  const sendData = (values) => {
+    if (values?.title?.value?.length === 0) {
+      toast("please Enter your title");
+    } else if (values?.minimumStore?.value?.length === 0) {
+      toast("please Enter your Minimum Store");
+    } else if (values?.packageName?.value?.length === 0) {
+      toast("please Enter your Package Name");
+    } else if (values?.type?.value?.length === 0) {
+      toast("please Enter your Type");
+    } else if (values?.status?.value?.length === 0) {
+      toast("please Enter your status");
+    } else {
+      const params = {
+        title: values.title.value,
+        minimumStore:values.minimumStore.value,
+        packageName: values.packageName.value,
+        status: values.status.value,
+        type: values.type.value,
+      };
+      axios
+        .post(`${ApiUrl}/packages/create`, params)
+
+        .then((res) => {
+          console.log(res.data);
+
+          if (res.data.status === "success") {
+            toast("Package created successfully!");
+
+          }
+        });
+    }
+  };
+
+
+  const updateData = (values) => {
+    
+      const params = {
+        'id':sellerid,
+        'title': values.title.value,
+        'minimumStore': values.minimumStore.value,
+        'packageName': values.packageName.value,
+        'status': values.status.value,
+        'type': values.type.value,
+      };
+      axios
+        .post(`${ApiUrl}/packages/create`, params)
+
+        .then((res) => {
+          console.log(res.data);
+
+          if (res.data.status === "success") {
+             
+            document.getElementById('myclosebtn').click();
+            document.getElementById('myclosebtn').disabled=true;
+
+            // const button = document.getElementById("myclosebtn");
+
+            // Define a click event handler function
+            
+            toast("package update successfully!");
+          }
+        });
+    
+  };
+
+  const onDeleteStudent = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete?",
+      onOk: () => {
+        axios.delete(`${ApiUrl}/packages/deleteByID?id=` + id).then((res) => {
+          console.log(res.data);
+
+          toast("e-stock deleted successfully!");
+        });
+      },
+    });
+  };
+
   return (
     <>
       <div>
         <header>
           <div className="bg-theme">
             <div className="main-wrapper">
-              <div className="container py-4">
-                <h5 className="kk ps-3">Manage Internships / Jobs</h5>
+              <ToastContainer/>
+              <div className="container-fluid py-4">
+                <h5 className="kk ps-3">Manage Our Packages</h5>
 
                 <div className="min-box  border">
                   <div className="products-actions d-flex p-4">
                     <div className="imort-product ">
-                      <div className="btn-product d-flex">
-                       
-                      </div>
+                      <div className="btn-product d-flex"></div>
                     </div>
                     <div className="action-btn">
                       <div className="actions d-flex">
                         <div className="Bulk-btn">
-                          
-
                           <div
                             className="offcanvas offcanvas-end"
                             tabIndex={-1}
@@ -39,7 +125,7 @@ function Business() {
                           >
                             <div className="offcanvas-header px-4">
                               <div className="content-header">
-                                <h4>Manage Internships / Jobs  Create / Update</h4>
+                                <h4>Manage Our Packages Create / Update</h4>
                                 <p>
                                   Update products info, combinations and extras.
                                 </p>
@@ -62,24 +148,24 @@ function Business() {
                             <div className="offcanvas-body p-0">
                               <div className="form-data">
                                 <div className="wrap-data p-5">
-                                  <form>
-                        
+                                  <form  onSubmit={(e)=>{e.preventDefault(); sendData(e.target)}}>
                                     <div className="row g-4 pt-4  align-items-center">
                                       <div className="col-md-4">
                                         <label
                                           for="inputPassword6"
                                           className="form-label"
                                         >
-                                        Title
+                                          Title
                                         </label>
                                       </div>
                                       <div className="col-md-8">
                                         <input
-                                          type="password"
-                                          id="inputPassword6"
+                                          type="text"
+                                          name="title"
+                                      
                                           className="form-control-input"
                                           aria-labelledby="passwordHelpInline"
-                                          placeholder="Title"
+                                          placeholder="Enter Title"
                                         />
                                       </div>
                                     </div>
@@ -89,102 +175,65 @@ function Business() {
                                           for="inputPassword6"
                                           className="form-label"
                                         >
-                              
-                                   Select Date
+                                          Minimum Store
                                         </label>
                                       </div>
                                       <div className="col-md-8">
                                         <input
-                                          type="date"
-                                          id="inputPassword6"
+                                          type="text"
+                                          name="minimumStore"
                                           className="form-control-input"
                                           aria-labelledby="passwordHelpInline"
-                                          placeholder="Email"
+                                          placeholder="Enter Minimum Store"
                                         />
                                       </div>
                                     </div>
-                            
                                     <div className="row pt-4  align-items-center">
                                       <div className="col-md-4">
                                         <label
                                           for="inputPassword6"
                                           className="form-label"
                                         >
-                                    
-                                        Opportunities Details
+                                          Package Name
                                         </label>
                                       </div>
                                       <div className="col-md-8">
-                                        <textarea
-                                          type="password"
-                                          id="inputPassword6"
+                                        <input
+                                          type="text"
+                                        
+                                          name="packageName"
                                           className="form-control-input"
                                           aria-labelledby="passwordHelpInline"
-                                          placeholder="
-                                          Opportunities Details"
-                                        ></textarea>
+                                          placeholder="Enter Package Name"
+                                        />
                                       </div>
                                     </div>
 
-                                 
                                     <div className="row  pt-4  align-items-center">
                                       <div className="col-md-4">
                                         <label
                                           for="inputPassword6"
                                           className="form-label"
                                         >
-                                          Image
+                                          Type
                                         </label>
                                       </div>
                                       <div className="col-md-8">
-                                      <div className="col-span-8 sm:col-span-4">
-  <div className="w-full text-center">
-    <div
-      className="border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-3 cursor-pointer px-6 pt-5 pb-4"
-      role="button"
-      tabIndex={0}
-      style={{borderStyle:'dotted',borderColor:'#0E9F6E'}}
-    >
-      <input
-        accept="image/*"
-        multiple=""
-        type="file"
-        
-      />
-      <span className="mx-auto flex justify-center">
-        <svg
-          stroke="currentColor"
-          fill="none"
-          strokeWidth={2}
-          viewBox="0 0 24 24"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-3xl text-green-500"
-          height="1em"
-          width="1em"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <polyline points="16 16 12 12 8 16" />
-          <line x1={12} y1={12} x2={12} y2={21} />
-          <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
-          <polyline points="16 16 12 12 8 16" />
-        </svg>
-      </span>
-      <p className="text-sm mt-2">Drag your images here</p>
-      <em className="text-xs text-gray-400">
-        (Only *.jpeg, *.webp and *.png images will be accepted)
-      </em>
-    </div>
-    <div className="text-green-500" />
-    <aside className="flex flex-row flex-wrap mt-4" />
-  </div>
-</div>
+                                        <select
+                                        name="type"
+                                          class="form-control-input-2"
+                                          aria-label="Default select example"
+                                        >
+                                          <option value="In City">In City</option>
+                                          <option value="National">National</option>
 
+                                          <option value="International">
+                                            International
+                                          </option>
+                                        </select>
                                       </div>
                                     </div>
-                                   
 
-                                    
                                     <div className="row  pt-4  align-items-center">
                                       <div className="col-md-4">
                                         <label
@@ -196,19 +245,16 @@ function Business() {
                                       </div>
                                       <div className="col-md-8">
                                         <select
+                                        name="status"
                                           class="form-control-input-2"
                                           aria-label="Default select example"
                                         >
-                                          <option value="1">Active</option>
-                                          <option value="1">Inactive</option>
+                                          <option value="Active">Active</option>
+                                          <option value="Inactive">Inactive</option>
                                         </select>
                                       </div>
                                     </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="offcanvas-footer px-5 py-3">
+                                    <div className="offcanvas-footer px-5 py-3">
                               <div className="content-footer">
                                 <div className="row">
                                   <div className="col-lg-6 col-md-12 py-3">
@@ -221,7 +267,7 @@ function Business() {
                                   </div>
                                   <div className="col-lg-6 col-md-12 py-3">
                                     <button
-                                      type="button"
+                                      type="submit"
                                       class="add-last-btn btn-lg"
                                     >
                                       Save
@@ -230,62 +276,197 @@ function Business() {
                                 </div>
                               </div>
                             </div>
-                            {/* Canvas */}
-                          </div>
-                        </div>
-                        <div className="Del-btn px-3">
-                          
-                        </div>
-                        {/* Modal-Del */}
-                        <div
-                          class="modal fade"
-                          id="exampleModal"
-                          tabindex="-1"
-                          aria-labelledby="exampleModalLabel"
-                          aria-hidden="true"
-                        >
-                          <div class="modal-dialog">
-                            <div class="modal-content py-4">
-                              <div class="modal-body">
-                                <div className="modal-icon">
-                                  <span
-                                    style={{ fontSize: 35, color: "#f05252" }}
-                                    className="px-3"
-                                  >
-                                    <RiDeleteBinLine />
-                                  </span>
-                                </div>
-                                <h1 class="title py-3">
-                                  Are You Sure! Want to Delete{" "}
-                                  <span style={{ color: "#f05252" }}>
-                                    Selected Products?
-                                  </span>
-                                </h1>
-                                <p className="para">
-                                  Do you really want to delete these records?
-                                  You can't view this in <br /> your list
-                                  anymore if you delete!
-                                </p>
-                                ...
-                                <div className="last-btn">
-                                  <button
-                                    type="button"
-                                    class="btn  btn-light mx-4 py-2 px-4"
-                                    data-bs-dismiss="modal"
-                                  >
-                                    No,Keep It
-                                  </button>
-                                  <button
-                                    type="button"
-                                    class="btn btn-success py-2 px-4"
-                                  >
-                                    Yes, Delete It
-                                  </button>
+                                  </form>
                                 </div>
                               </div>
                             </div>
+                           
+                            {/* Canvas */}
+                          </div>
+
+                          <div
+                            className="offcanvas offcanvas-end"
+                            tabIndex={-1}
+                            id="offcanvasRightupdate"
+                            aria-labelledby="offcanvasRightLabel"
+                          >
+                            <div className="offcanvas-header px-4">
+                              <div className="content-header">
+                                <h4>Manage Our Packages Create / Update</h4>
+                                <p>
+                                  Update products info, combinations and extras.
+                                </p>
+                              </div>
+
+                              <button
+                                type="button"
+                                className="btn-close bg-white shadow rounded-5 text-reset"
+                                data-bs-dismiss="offcanvas"
+                                aria-label="Close"
+                                style={{
+                                  width: "5px",
+                                  height: "30px",
+                                  opacity: "0.8",
+                                  fontSize: "12px",
+                                }}
+                              />
+                            </div>
+                            {/* Canvas */}
+                            <div className="offcanvas-body p-0">
+                              <div className="form-data">
+                                <div className="wrap-data p-5">
+                                  <form onSubmit={(e)=>{e.preventDefault(); updateData(e.target)}}>
+                                    <div className="row g-4 pt-4  align-items-center">
+                                      <div className="col-md-4">
+                                        <label
+                                          for="inputPassword6"
+                                          className="form-label"
+                                        >
+                                          Title
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          type="text"
+                                          name="title"
+                                       
+                                          className="form-control-input"
+                                          aria-labelledby="passwordHelpInline"
+                                          placeholder="Enter Title"
+                                          defaultValue={packagesSingle?.title}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="row pt-4  align-items-center">
+                                      <div className="col-md-4">
+                                        <label
+                                          for="inputPassword6"
+                                          className="form-label"
+                                        >
+                                          Minimum Store
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          type="text"
+                                        name="minimumStore"
+                                          className="form-control-input"
+                                          aria-labelledby="passwordHelpInline"
+                                          placeholder="Enter Minimum Store"
+                                          defaultValue={packagesSingle?.minimumStore}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="row pt-4  align-items-center">
+                                      <div className="col-md-4">
+                                        <label
+                                          for="inputPassword6"
+                                          className="form-label"
+                                        >
+                                          Package Name
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          type="text"
+                                        
+                                          name="packageName"
+                                          className="form-control-input"
+                                          aria-labelledby="passwordHelpInline"
+                                          placeholder="Enter Package Name"
+                                          defaultValue={packagesSingle?.packageName}
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div className="row  pt-4  align-items-center">
+                                      <div className="col-md-4">
+                                        <label
+                                          for="inputPassword6"
+                                          className="form-label"
+                                        >
+                                          Type
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <select
+                                        name="type"
+                                          class="form-control-input-2"
+                                          aria-label="Default select example"
+                                          defaultValue={packagesSingle?.type}
+                                        >
+                                          <option value="In City">In City</option>
+                                          <option value="National">National</option>
+
+                                          <option value="International">
+                                            International
+                                          </option>
+                                        </select>
+                                      </div>
+                                    </div>
+
+                                    <div className="row  pt-4  align-items-center">
+                                      <div className="col-md-4">
+                                        <label
+                                          for="inputPassword6"
+                                          className="form-label"
+                                        >
+                                          Status
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <select
+                                        name="status"
+                                          class="form-control-input-2"
+                                          aria-label="Default select example"
+                                          defaultValue={packagesSingle?.status}
+                                        >
+                                          <option value="Active">Active</option>
+                                          <option value="Inactive">Inactive</option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                    <div className="offcanvas-footer px-5 py-3">
+                              <div className="content-footer">
+                                <div className="row">
+                                  <div className="col-lg-6 col-md-12 py-3">
+                                    <button
+                                      type="button"
+                                      class="cancel-btn btn-lg"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                  <div className="col-lg-6 col-md-12 py-3">
+                                  <button
+                                    type="submit"
+                                    class="add-last-btn btn-lg"
+                                    data-bs-dismiss="abc"
+                                  >
+                                    Update Package
+                                  </button>
+                                  <button
+                                    style={{ display: "none" }}
+                                    type="submit"
+                                    class="add-last-btn btn-lg"
+                                    id="myclosebtn"
+                                    data-bs-dismiss="offcanvas"
+                                  >
+                                    Update Package
+                                  </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          
+                            {/* Canvas */}
                           </div>
                         </div>
+
                         {/* Modal-Del */}
                         <button
                           className="add-btn"
@@ -295,7 +476,7 @@ function Business() {
                           aria-controls="offcanvasRight"
                         >
                           <AiOutlinePlus />
-                          <span className="px-1"> Add Products</span>
+                          <span className="px-1"> Add Packages</span>
                         </button>
                         <div
                           className="offcanvas offcanvas-end w-75"
@@ -616,55 +797,26 @@ function Business() {
                     >
                       <thead className="bg-light">
                         <tr>
-                          <th>
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id="flexCheckDefault"
-                            />
-                          </th>
                           <th>#ID</th>
-                          <th>Image</th>
                           <th>Title</th>
-                          <th>Features</th>
-                      
+                          <th>Minimum Store</th>
+                          <th>Type</th>
 
                           <th>Status</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>
-                            {" "}
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id="flexCheckDefault"
-                            />
-                          </td>
-                          <td>#12</td>
-                          <td>  <div className="prod-img">
-                              <img src={require("../../../assets/images/p1.jpg")} alt="" />
-                            </div></td>
-                          <td>Trainer</td>
-                          <td>
-                            <span
-                              className="text-ligh  "
-                              style={{
-                                color: "#278a1a",
-                                fontSize: "10px",
-                                backgroundColor: "#41ff2848",
-                                borderRadius: 20,
-                                padding: "5px 10px",
-                              }}
-                            >
-                              Yes
-                            </span>
-                          </td>
-                   
+                        
+                        {packages?.map((item,index)=>{
+                         return (
+                          <>
+                          <tr>
+                          <td>{index+1}</td>
+                          <td>{item?.title}</td>
+                          <td>{item?.minimumStore}</td>
+                          <td>{item?.type}</td>
+
                           <td>
                             <span
                               className="text-ligh  "
@@ -682,18 +834,51 @@ function Business() {
 
                           <td>
                             <div className="actions d-flex">
-                              <span style={{ fontSize: 21 }}>
+                              <span
+                               onClick={() => {
+                              
+                                setSellerID(item?._id)
+                                    
+                                
+                                axios.get(`${ApiUrl}/packages/getById?id=`+item?._id).then((res) => {
+                                  console.log(res.data,'packages');
+                            
+                                  setPackagesSingle(res.data);
+                                });
+
+
+
+                              }}
+                              data-bs-toggle="offcanvas"
+                              data-bs-target="#offcanvasRightupdate"
+                              aria-controls="offcanvasRightupdate"
+
+                              style={{ fontSize: 21 }}>
                                 <FiEdit />
                               </span>
-                              <span style={{ fontSize: 21 }} className="px-3">
+                              <span
+                              
+                              
+                            onClick={() => {
+
+
+                              onDeleteStudent(item?._id);
+                             
+                            }}
+
+
+                              style={{ fontSize: 21 }} className="px-3">
                                 <RiDeleteBinLine />
                               </span>
                             </div>
                           </td>
                         </tr>
+                          </>
+                         )
+                        })}
+                        
                       </tbody>
                     </table>
-                    
                   </div>
                 </div>
               </div>
@@ -705,4 +890,4 @@ function Business() {
   );
 }
 
-export default Business;
+export default Packages;

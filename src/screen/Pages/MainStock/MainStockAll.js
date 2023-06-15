@@ -56,34 +56,8 @@ function AddSellerDetails() {
                            E-Stocks
                     </button>
                   </li>
-                  <li class="nav-item" role="presentation">
-                    <button
-                      class="nav-link"
-                      id="pills-service-tab"
-                      data-bs-toggle="pill"
-                      data-bs-target="#pills-service"
-                      type="button"
-                      role="tab"
-                      aria-controls="pills-service"
-                      aria-selected="false"
-                    >
-                           E-Services
-                    </button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <button
-                      class="nav-link"
-                      id="pills-Display-tab"
-                      data-bs-toggle="pill"
-                      data-bs-target="#pills-Display"
-                      type="button"
-                      role="tab"
-                      aria-controls="pills-Display"
-                      aria-selected="false"
-                    >
-                           E-Display
-                    </button>
-                  </li>
+                  
+                  
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
                   <div
@@ -105,24 +79,7 @@ function AddSellerDetails() {
                    <EStock />
                   </div>
                  
-                  <div
-                    class="tab-pane fade"
-                    id="pills-service"
-                    role="tabpanel"
-                    aria-labelledby="pills-service-tab"
-                  >
-                   
-                   <Services />
-                  </div>
-                  <div
-                    class="tab-pane fade"
-                    id="pills-Display"
-                    role="tabpanel"
-                    aria-labelledby="pills-Display-tab"
-                  >
-                   
-                   <E_Display />
-                  </div>
+                  
                 </div>
               </div>
             </div>

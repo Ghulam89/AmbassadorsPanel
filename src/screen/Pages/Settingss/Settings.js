@@ -1,15 +1,61 @@
-import React from "react";
+import React, { useEffect,useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import ApiUrl from "../BaseUrl";
 
 function Settings() {
+
+  const [seller, setSeller] = useState({});
+  useEffect(()=>{
+
+    axios.get(`${ApiUrl}/embassador/getById?id=`+localStorage.getItem('ambassadorId') ).then((res) => {
+      console.log(res.data);
+      setSeller(res.data);
+      console.log(seller);
+
+
+    });
+
+  },[])
+  
+  const sendData = (values) => {
+
+  
+      const params = new FormData();
+      params.append("name", values.name.value);
+      params.append("brandName", values.brandName.value);
+      params.append("brandLogo", values.brandLogo.files[0]);
+      params.append("email", values.email.value);
+      // params.append("phoneNo", values.phoneNo.value);
+      // params.append("password", values.password.value);
+
+      axios
+        .put(`${ApiUrl}/embassador/updateByID?id=` +localStorage.getItem('ambassadorId'), params)
+
+        .then((res) => {
+          console.log(res.data);
+
+          if (res.data.status === "fail") {
+            toast(res.data.msg);
+          } else if (res.data.status === "success") {
+            toast("Seller created successfully!");
+          }
+        })
+        .catch((err) => {
+          console.log(err.data);
+        });
+    
+  };
+
   return (
     <>
       <div>
         <section>
+          <ToastContainer />
           <div className="container py-4">
             <h4>Edit Profile </h4>
             <div className="row">
-            
-            
               <div className="col-md-12">
                 <div
                   class="tab-content border bg-white px-5 py-4 rounded"
@@ -21,40 +67,50 @@ function Settings() {
                     role="tabpanel"
                     aria-labelledby="v-pills-home-tab"
                   >
-                    <form>
+                    <form    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        sendData(e.target);
+                                      }}
+                                      >
                       <div className="row g-3">
                         <div className="col-md-6">
                           <label>Your Name</label>
                           <input
-                            type="password"
+                            type="text"
                             id="inputPassword6"
+                            name="name"
                             className="form-control-input"
                             aria-labelledby="passwordHelpInline"
                             placeholder="Your Name"
+                            defaultValue={seller?.name}
                           />
                         </div>
                         <div className="col-md-6">
                           <label>Your Email</label>
                           <input
-                            type="password"
+                            type="email"
+                            name="email"
                             id="inputPassword6"
                             className="form-control-input"
                             aria-labelledby="passwordHelpInline"
                             placeholder="Domain Name"
+                            defaultValue={seller?.email}
                           />
                         </div>
                         <div className="col-md-6">
-                          <label>Contact Number</label>
+                          <label>Seller Blo</label>
                           <input
-                            type="password"
+                            type="text"
                             id="inputPassword6"
+                            name="brandName"
                             className="form-control-input"
                             aria-labelledby="passwordHelpInline"
-                            placeholder="Contact Number"
+                            placeholder="Seller Blo"
+                            defaultValue={seller?.brandName}
                           />
                         </div>
                         <div className="col-md-12">
-                          <label>Profile Image</label>
+                          <label>Image</label>
                           <div className="col-span-8 sm:col-span-4">
                             <div className="w-full text-center">
                               <div
@@ -71,6 +127,8 @@ function Settings() {
                                   multiple=""
                                   type="file"
                                   className=""
+                                  name="brandLogo"
+                                  defaultValue={seller?.image}
                                 />
                                 <span className="mx-auto flex justify-center">
                                   <svg
@@ -104,16 +162,6 @@ function Settings() {
                             </div>
                           </div>
                         </div>
-                        <div className="col-md-12">
-                          <label>Business/office address</label>
-                          <input
-                            type="password"
-                            id="inputPassword6"
-                            className="form-control-input"
-                            aria-labelledby="passwordHelpInline"
-                            placeholder="Your Name"
-                          />
-                        </div>
                       </div>
 
                       <div class="row mt-3">
@@ -123,15 +171,13 @@ function Settings() {
                           </button>
                         </div>
                         <div class="col-lg-6 col-md-12 py-3">
-                          <button type="button" class="add-last-btn btn-lg">
+                          <button type="submit" class="add-last-btn btn-lg">
                             Update
                           </button>
                         </div>
                       </div>
                     </form>
                   </div>
-                  
-                  
                 </div>
               </div>
             </div>

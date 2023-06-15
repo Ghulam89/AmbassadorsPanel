@@ -1,3 +1,3 @@
-const  ApiUrl = 'http://157.245.104.106:3003'
+const  ApiUrl = 'http://192.168.18.130:3003'
 
 export default ApiUrl;

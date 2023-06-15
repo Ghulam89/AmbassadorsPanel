@@ -4,62 +4,33 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { BiImport } from "react-icons/bi";
+import { BiExport } from "react-icons/bi";
+
 import { AiOutlinePlus, AiFillDelete, AiFillCloseCircle } from "react-icons/ai";
 import { Modal } from "antd";
 import { AiOutlineZoomIn } from "react-icons/ai";
 import ApiUrl from "../BaseUrl";
 import { useParams } from "react-router-dom";
-function ERacks() {
+function E_Display() {
 
   const {id}=useParams()
 
 
   const [rackId,setRackId] = useState(null)
-  const [stores,setStores] = useState({})
-    console.log('=========stores=========',stores);
+
   console.log('===========',rackId);
   const [racks, setRacks] = useState([]);
 
-     console.log('sssssssssss',racks);
+  
 
   useEffect(() => {
     axios.get(`${ApiUrl}/e-rack/getByStoreID?id=` + id).then((res) => {
-      console.log(res.data[0]?.storeID);
+      console.log(res.data);
       setRacks(res.data);
-      axios.get(`${ApiUrl}/store/getById?id=`+ res.data[0]?.storeID).then((res) => {
-        console.log(res.data);
-        setStores(res.data);
-      });
-      
+      console.log(racks);
     });
-
-    
-    console.log(racks,'=======================check');
   }, []);
-
-
-  const onSide=(rack)=>{
-    var rent=0
-    var owned=0
-
-
-    rack?.map((item)=>{
-      if(item?.type==='rent'){
-        rent++;
-      }
-      else if(item?.type==='owned'){
-        owned++
-      }
-    })
-
-
-    return {rent,owned}
-    
-  }
-
-
-
-  const rack=onSide(racks)
 
   const sendData = (values) => {
     // const id = localStorage.getItem("myUserId");
@@ -82,13 +53,26 @@ function ERacks() {
 
           toast(" update successfully!");
 
-        
+          axios.get(`${ApiUrl}/e-rack/getByStoreID?id=` + id).then((res) => {
+            console.log(res.data);
+            setRacks(res.data);
+            console.log(racks);
+          });
           
         });
     }
   };
 
-
+  const onDeleteStudent = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete?",
+      onOk: () => {
+        axios.delete(`${ApiUrl}/e-rack/deleteByID?id=` + id).then((res) => {
+          console.log(res.data);
+        });
+      },
+    });
+  };
 
   const updateSend = (values) => {
     // const id = localStorage.getItem("myUserId");
@@ -104,7 +88,6 @@ function ERacks() {
         id: rackId,
         width: values.width.value,
         height: values.height.value,
-        type: values.type.value,
         state: values.state.value,
       };
       console.log(params);
@@ -127,7 +110,7 @@ function ERacks() {
             <ToastContainer />
             <div className="main-wrapper">
               <div className="container py-4">
-                <h5 className="kk ps-3"> Manage E-Racks</h5>
+                <h5 className="kk ps-3"> Manage E-Display</h5>
 
                     
                 
@@ -138,7 +121,18 @@ function ERacks() {
                      
                         
                         {/* Modal-Del */}
-                      
+                        <div className="text-end">
+                        <button
+                          className="add-btn"
+                          type="button"
+                          data-bs-toggle="offcanvas"
+                          data-bs-target="#offcanvasRight"
+                          aria-controls="offcanvasRight"
+                        >
+                          <AiOutlinePlus />
+                          <span className="px-1"> Add Racks</span>
+                        </button>
+                        </div>
 
 
                              <div
@@ -541,447 +535,196 @@ function ERacks() {
 
                   {/* Canvas */}
                 </div>
-<div className="all_categories">
 
-                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="pills-Side-tab" data-bs-toggle="pill" data-bs-target="#pills-Side" type="button" role="tab" aria-controls="pills-Side" aria-selected="true">Rent</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="pills-Owned-tab" data-bs-toggle="pill" data-bs-target="#pills-Owned" type="button" role="tab" aria-controls="pills-Owned" aria-selected="false">Owned</button>
-  </li>
- 
-</ul>
-
-
-<div class="tab-content" id="pills-tabContent">
-  <div class="tab-pane fade show active" id="pills-Side" role="tabpanel" aria-labelledby="pills-Side-tab">
-    
-  <h3 className="py-4">
-                  Total Number of Racks: {rack.rent}
+                <h3 className="py-4">
+                  Total Number of Racks: {racks?.length}
                 </h3>
                 <div className="row g-4">
                   {racks.map((item, index) => {
-                    if(item?.type==="rent"){
-                      return (
-                        <div className="col-md-3">
+                    return (
+                      <div className="col-md-3">
+                        <div
+                       
+                          className="p-2"
+                          style={{
+                            backgroundColor: "#fff",
+                            border: " 1px solid rgb(243, 239, 239)",
+
+                            borderRadius: "10px",
+                          }}
+                        >
                           <div
-                         
-                            className="p-2"
+                            
+                            className="order"
                             style={{
-                              backgroundColor: "#fff",
-                              border: " 1px solid rgb(243, 239, 239)",
-  
-                              borderRadius: "10px",
+                              display: "flex",
+                              justifyContent: "space-between",
                             }}
                           >
+                            <div className=""  data-bs-toggle="modal"
+                             data-bs-target="#exampleModal2"
+   
+                             onClick={()=>setRackId(item?._id)}>
+                              <p className="m-0"> Number of Racks</p>
+                              <h4>{index + 1}</h4>
+                            </div>
+
+                            <div style={{zIndex:'999'}}>
+                              <i>
+                                <AiFillDelete
+                                  size={20}
+                                  onClick={() => onDeleteStudent(item?._id)}
+                                  color="red"
+                                />
+                              </i>
+                            </div>
+                          </div>
+
+                          {item?.state === "empty" ? (
                             <div
-                              
-                              className="order"
+                              className=""
                               style={{
+                                background: "#FEECDC",
+                                width: "30px",
+                                height: "30px",
+                                lineHeight: "30px",
+                                borderRadius: "50%",
+                                justifyContent: "center",
+                                alignItems: "center",
                                 display: "flex",
-                                justifyContent: "space-between",
                               }}
                             >
-                              <div className=""  data-bs-toggle="modal"
-                               data-bs-target="#exampleModal2"
-     
-                               onClick={()=>setRackId(item?._id)}>
-                                <p className="m-0"> Number of Racks</p>
-                                <h4>{`${  stores?.name}${index + 1}`}</h4>
-                              </div>
-  
-                              <div style={{zIndex:'999'}}>
-                            
-                              </div>
+                              <AiFillCloseCircle size={20} color="red" />
                             </div>
-  
-                            {item?.state === "empty" ? (
-                              <div
-                                className=""
-                                style={{
-                                  background: "#FEECDC",
-                                  width: "30px",
-                                  height: "30px",
-                                  lineHeight: "30px",
-                                  borderRadius: "50%",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  display: "flex",
-                                }}
-                              >
-                                <AiFillCloseCircle size={20} color="red" />
-                              </div>
-                            ) : (
-                              <div
-                                className=""
-                                style={{
-                                  background: "#FEECDC",
-                                  width: "30px",
-                                  height: "30px",
-                                  lineHeight: "30px",
-                                  borderRadius: "50%",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  display: "flex",
-                                }}
-                              >
-                                <i
-                                  class="fa-solid fa-check"
-                                  style={{
-                                    fontSize: "18px",
-  
-                                    color: " #0E9F6E",
-                                  }}
-                                ></i>
-                              </div>
-                            )}
-                          </div>
-  
-  
-  
-  
-                          <div
-                            class="modal fade"
-                            id="exampleModal2"
-                            tabindex="-1"
-                            aria-labelledby="exampleModalLabel"
-                            aria-hidden="true"
-                          >
-                            <div class="modal-dialog w-100">
-                              <div class="modal-content w-100">
-                                <div class="modal-body w-100">
-                                  <form
-                                    onSubmit={(e) => {
-                                      e.preventDefault();
-                                      updateSend(e.target);
-                                    }}
-                                  >
-                                    <div className="row  pt-4  align-items-center">
-                                      <div className="col-md-2">
-                                        <label
-                                          for="inputPassword6"
-                                          className="form-label"
-                                        >
-                                          width
-                                        </label>
-                                      </div>
-                                      <div className="col-md-10">
-                                        <input
-                                          className="form-control"
-                                          name="width"
-                                          placeholder="Enter Size"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="row  pt-4  align-items-center">
-                                      <div className="col-md-2">
-                                        <label
-                                          for="inputPassword6"
-                                          className="form-label"
-                                        >
-                                          Height
-                                        </label>
-                                      </div>
-                                      <div className="col-md-10">
-                                        <input
-                                          className="form-control"
-                                          name="height"
-                                          placeholder="Enter Size"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="row  pt-4  align-items-center">
-                                      <div className="col-md-2">
-                                        <label
-                                          for="inputPassword6"
-                                          className="form-label"
-                                        >
-                                          Type
-                                        </label>
-                                      </div>
-                                      <div className="col-md-10">
-                                          <select
-  
-                                            class="form-control-input-2 p-1"
-                                            aria-label="Default select example"
-                                            name="type"
-                                          >
-                                            <option value="rent" >Rent</option>
-                                            <option value="owned">Owned</option>
-                                          </select>
-                                      </div>
-                                    </div>
-                                    <div className="row  pt-4  align-items-center">
-                                      <div className="col-md-2">
-                                        <label
-                                          for="inputPassword6"
-                                          className="form-label"
-                                        >
-                                          State
-                                        </label>
-                                      </div>
-                                      <div className="col-md-10">
-                                        <select
-                                          class="form-control-input-2"
-                                          name="state"
-                                        >
-                                          <option value="Occupied">
-                                            Occupied
-                                          </option>
-                                          <option value="Empty">Empty</option>
-                                        </select>
-                                      </div>
-                                    </div>
-                                    <div className="row">
-                                      <div className="col-lg-6 col-md-12 py-3">
-                                        <button
-                                          type="button"
-                                          class="cancel-btn btn-lg"
-                                        >
-                                          Cancel
-                                        </button>
-                                      </div>
-                                      <div className="col-lg-6 col-md-12 py-3">
-                                        <button
-                                          type="submit"
-                                          class="add-last-btn btn-lg"
-                                        >
-                                          Save
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-  
-  
-                        </div>
-                      );
-                    }
-                   
-                  })}
-                </div>
-  </div>
-  <div class="tab-pane fade" id="pills-Owned" role="tabpanel" aria-labelledby="pills-Owned-tab">
-    
-  <h3 className="py-4">
-                  Total Number of Racks: {rack.owned}
-                </h3>
-                <div className="row g-4">
-                  {racks.map((item, index) => {
-
-                    if(item?.type==='owned'){
-                      return (
-                        <div className="col-md-3">
-                          <div
-                         
-                            className="p-2"
-                            style={{
-                              backgroundColor: "#fff",
-                              border: " 1px solid rgb(243, 239, 239)",
-  
-                              borderRadius: "10px",
-                            }}
-                          >
+                          ) : (
                             <div
-                              
-                              className="order"
+                              className=""
                               style={{
+                                background: "#FEECDC",
+                                width: "30px",
+                                height: "30px",
+                                lineHeight: "30px",
+                                borderRadius: "50%",
+                                justifyContent: "center",
+                                alignItems: "center",
                                 display: "flex",
-                                justifyContent: "space-between",
                               }}
                             >
-                              <div className=""  data-bs-toggle="modal"
-                               data-bs-target="#exampleModal12"
-     
-                               onClick={()=>setRackId(item?._id)}>
-                                <p className="m-0"> Number of Racks</p>
-                                <h4>{index + 1}</h4>
-                              </div>
-  
-                              <div style={{zIndex:'999'}}>
-                            
-                              </div>
-                            </div>
-  
-                            {item?.state === "empty" ? (
-                              <div
-                                className=""
+                              <i
+                                class="fa-solid fa-check"
                                 style={{
-                                  background: "#FEECDC",
-                                  width: "30px",
-                                  height: "30px",
-                                  lineHeight: "30px",
-                                  borderRadius: "50%",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  display: "flex",
+                                  fontSize: "18px",
+
+                                  color: " #0E9F6E",
                                 }}
-                              >
-                                <AiFillCloseCircle size={20} color="red" />
-                              </div>
-                            ) : (
-                              <div
-                                className=""
-                                style={{
-                                  background: "#FEECDC",
-                                  width: "30px",
-                                  height: "30px",
-                                  lineHeight: "30px",
-                                  borderRadius: "50%",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  display: "flex",
-                                }}
-                              >
-                                <i
-                                  class="fa-solid fa-check"
-                                  style={{
-                                    fontSize: "18px",
-  
-                                    color: " #0E9F6E",
-                                  }}
-                                ></i>
-                              </div>
-                            )}
-                          </div>
-  
-  
-  
-  
-                          <div
-                            class="modal fade"
-                            id="exampleModal12"
-                            tabindex="-1"
-                            aria-labelledby="exampleModalLabel"
-                            aria-hidden="true"
-                          >
-                            <div class="modal-dialog w-100">
-                              <div class="modal-content w-100">
-                                <div class="modal-body w-100">
-                                  <form
-                                    onSubmit={(e) => {
-                                      e.preventDefault();
-                                      updateSend(e.target);
-                                    }}
-                                  >
-                                    <div className="row  pt-4  align-items-center">
-                                      <div className="col-md-2">
-                                        <label
-                                          for="inputPassword6"
-                                          className="form-label"
-                                        >
-                                          width
-                                        </label>
-                                      </div>
-                                      <div className="col-md-10">
-                                        <input
-                                          className="form-control"
-                                          name="width"
-                                          placeholder="Enter Size"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="row  pt-4  align-items-center">
-                                      <div className="col-md-2">
-                                        <label
-                                          for="inputPassword6"
-                                          className="form-label"
-                                        >
-                                          Height
-                                        </label>
-                                      </div>
-                                      <div className="col-md-10">
-                                        <input
-                                          className="form-control"
-                                          name="height"
-                                          placeholder="Enter Size"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="row  pt-4  align-items-center">
-                                      <div className="col-md-2">
-                                        <label
-                                          for="inputPassword6"
-                                          className="form-label"
-                                        >
-                                          Type
-                                        </label>
-                                      </div>
-                                      <div className="col-md-10">
-                                          <select
-  
-                                            class="form-control-input-2 p-1"
-                                            aria-label="Default select example"
-                                            name="type"
-                                          >
-                                            <option value="rent" >Rent</option>
-                                            <option value="owned">Owned</option>
-                                          </select>
-                                      </div>
-                                    </div>
-                                    <div className="row  pt-4  align-items-center">
-                                      <div className="col-md-2">
-                                        <label
-                                          for="inputPassword6"
-                                          className="form-label"
-                                        >
-                                          State
-                                        </label>
-                                      </div>
-                                      <div className="col-md-10">
-                                        <select
-                                          class="form-control-input-2"
-                                          name="state"
-                                        >
-                                          <option value="Occupied">
-                                            Occupied
-                                          </option>
-                                          <option value="Empty">Empty</option>
-                                        </select>
-                                      </div>
-                                    </div>
-                                    <div className="row">
-                                      <div className="col-lg-6 col-md-12 py-3">
-                                        <button
-                                          type="button"
-                                          class="cancel-btn btn-lg"
-                                        >
-                                          Cancel
-                                        </button>
-                                      </div>
-                                      <div className="col-lg-6 col-md-12 py-3">
-                                        <button
-                                          type="submit"
-                                          class="add-last-btn btn-lg"
-                                        >
-                                          Save
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </form>
-                                </div>
-                              </div>
+                              ></i>
                             </div>
-                          </div>
-  
-  
+                          )}
                         </div>
-                      );
-                    }
-                    
+
+
+
+
+                        <div
+                          class="modal fade"
+                          id="exampleModal2"
+                          tabindex="-1"
+                          aria-labelledby="exampleModalLabel"
+                          aria-hidden="true"
+                        >
+                          <div class="modal-dialog w-100">
+                            <div class="modal-content w-100">
+                              <div class="modal-body w-100">
+                                <form
+                                  onSubmit={(e) => {
+                                    e.preventDefault();
+                                    updateSend(e.target);
+                                  }}
+                                >
+                                  <div className="row  pt-4  align-items-center">
+                                    <div className="col-md-2">
+                                      <label
+                                        for="inputPassword6"
+                                        className="form-label"
+                                      >
+                                        width
+                                      </label>
+                                    </div>
+                                    <div className="col-md-10">
+                                      <input
+                                        className="form-control"
+                                        name="width"
+                                        placeholder="Enter Size"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="row  pt-4  align-items-center">
+                                    <div className="col-md-2">
+                                      <label
+                                        for="inputPassword6"
+                                        className="form-label"
+                                      >
+                                        Height
+                                      </label>
+                                    </div>
+                                    <div className="col-md-10">
+                                      <input
+                                        className="form-control"
+                                        name="height"
+                                        placeholder="Enter Size"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="row  pt-4  align-items-center">
+                                    <div className="col-md-2">
+                                      <label
+                                        for="inputPassword6"
+                                        className="form-label"
+                                      >
+                                        State
+                                      </label>
+                                    </div>
+                                    <div className="col-md-10">
+                                      <select
+                                        class="form-control-input-2"
+                                        name="state"
+                                      >
+                                        <option value="Occupied">
+                                          Occupied
+                                        </option>
+                                        <option value="Empty">Empty</option>
+                                      </select>
+                                    </div>
+                                  </div>
+                                  <div className="row">
+                                    <div className="col-lg-6 col-md-12 py-3">
+                                      <button
+                                        type="button"
+                                        class="cancel-btn btn-lg"
+                                      >
+                                        Cancel
+                                      </button>
+                                    </div>
+                                    <div className="col-lg-6 col-md-12 py-3">
+                                      <button
+                                        type="submit"
+                                        class="add-last-btn btn-lg"
+                                      >
+                                        Save
+                                      </button>
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+
+                      </div>
+                    );
                   })}
                 </div>
-  </div>
-  
-</div>
-
-</div>
-
-
               </div>
             </div>
           </div>
@@ -991,4 +734,4 @@ function ERacks() {
   );
 }
 
-export default ERacks;
+export default E_Display;

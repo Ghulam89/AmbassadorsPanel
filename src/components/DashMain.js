@@ -82,8 +82,6 @@ function ScrollableSection({left}) {
                 </div>
               </div>
             </div>
-          </div>
-          <div class="accordion accordion-flush" id="accordionFlushExample2">
             <div class="accordion-item ">
               <h2 class="accordion-header" id="flush-headingThree">
                 <button
@@ -134,6 +132,7 @@ function ScrollableSection({left}) {
               </div>
             </div>
           </div>
+          
 
 
           <li className="nav-item">
@@ -191,6 +190,16 @@ function ScrollableSection({left}) {
             >
               <i class="fa-sharp fa-solid fa-briefcase"></i>Business
               Opportunities
+            </Link>
+          </li>
+
+          <li className="nav-item">
+            <Link
+              to="/packages"
+              className="fw-semi-bold nav-link active"
+              aria-current="page"
+            >
+              <i class="fa-sharp fa-solid fa-briefcase"></i>Packages
             </Link>
           </li>
 

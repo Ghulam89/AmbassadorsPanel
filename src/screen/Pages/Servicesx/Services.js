@@ -18,12 +18,14 @@ function Services({ ID }) {
   console.log("dfdfd", singleService);
   const [sellerid, setSellerID] = useState(null);
 
-  const [offcanvas, setOffcanvas] = useState("off");
+  const  [offcanvas, setOffcanvas] = useState("off");
 
-
+        
      
     console.log('dfdfdfdffdfdfadfadsfda',offcanvas);
+
   const {id,serId}=useParams()
+
 
   const navigate=useNavigate()
 
@@ -40,7 +42,6 @@ function Services({ ID }) {
   }, []);
 
   const sendData = (values) => {
-    const id = localStorage.getItem("myUserId");
 
     if (values?.title?.value?.length === 0) {
       toast("please Enter your your title");
@@ -58,7 +59,7 @@ function Services({ ID }) {
       toast("please Enter your status");
     } else {
       const params = new FormData();
-      params.append("storeID", ID);
+      params.append("storeID", id);
       params.append("title", values.title.value);
       params.append("serviceProvider", values.serviceProvider.value);
       params.append("serviceContent", values.serviceContent.value);
@@ -73,6 +74,12 @@ function Services({ ID }) {
           console.log(res.data);
 
           toast("E service created successfully!");
+          axios.get(`${ApiUrl}/e-service/getByStoreID?id=`+id).then((res) => {
+            console.log(res.data);
+            console.log(services);
+            setServices([...res.data]);
+            console.log(services);
+          });
 
         });
     }
@@ -98,6 +105,14 @@ function Services({ ID }) {
 
           toast("E service update successfully!");
               
+
+          axios.get(`${ApiUrl}/e-service/getByStoreID?id=`+id).then((res) => {
+            console.log(res.data);
+            console.log(services);
+            setServices([...res.data]);
+            console.log(services);
+          });
+
           if(res.data.status==='success'){
 
             console.log(offcanvas)
@@ -128,6 +143,14 @@ function Services({ ID }) {
           //   setServices(res.data);
           //   console.log(services);
           // });
+
+
+          axios.get(`${ApiUrl}/e-service/getByStoreID?id=`+id).then((res) => {
+            console.log(res.data);
+            console.log(services);
+            setServices([...res.data]);
+            console.log(services);
+          });
 
 
         });

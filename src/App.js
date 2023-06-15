@@ -27,6 +27,9 @@ import ERacks from "./screen/Pages/E-Racks/ERacks";
 import Services from "./screen/Pages/Servicesx/Services";
 import CreateStore from "./screen/Pages/CreateStore/CreateStore";
 import AddSellerDetails from "./screen/Pages/Seller/AddSellerDetails";
+import Packages from "./screen/Pages/Packages/Packages";
+import MainStockRacks from "./screen/Pages/MainStock/MainStockRacks";
+import ViewProduct from "./screen/Pages/ViewProduct/ViewProduct";
 function App() {
   return (
     <>
@@ -50,13 +53,15 @@ function App() {
             <Route path="/seller_requests" element={<SellerRequests />} />
             <Route path="/seller_details/:id" element={<AddSellerDetails />} />
             <Route path="/seller_details/:id/:serId" element={<AddSellerDetails />} />
-          
+            <Route path="/mainStockracks/:id" element={<MainStockRacks />} />
            
             <Route path="/brands" element={<Breand />} />
+            <Route path="/packages" element={<Packages />} />
             <Route path="/stores" element={<Stores />} />
             <Route path="/create_store/:id" element={<CreateStore />} />
 
             <Route  path="/services/:id" element={<Services />} />
+            <Route  path="/viewProduct/:id" element={<ViewProduct />} />
 
 
             <Route  path="/e_stock/:id" element={<EStock />} />

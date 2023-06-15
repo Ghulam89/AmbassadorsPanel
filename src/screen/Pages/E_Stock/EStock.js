@@ -24,7 +24,7 @@ function EStock() {
     console.log(singleStock);
 
 
-  const {id,serId}=useParams()
+  const {id}=useParams()
 
   const navigate=useNavigate()
 
@@ -34,32 +34,23 @@ function EStock() {
   useEffect(() => {
 
 
-    axios.get(`${ApiUrl}/e-stock/getAll`).then((res) => {
+    axios.get(`${ApiUrl}/e-stock/getByStoreID?id=`+id).then((res) => {
       console.log(res.data);
-      setStocks(res.data);
+      setStocks([...res.data]);
       console.log(stocks);
 
       
     });
     
-    axios.get(`${ApiUrl}/e-stock/getById?id=`+serId).then((res) => {
-      console.log(res.data);
-      setSingleStock(res.data);
-    });
+    
   }, []);
 
 
-  const ournav=(id)=>{
-    navigate(id)
-    axios.get(`${ApiUrl}/e-stock/getById?id=`+serId).then((res) => {
-      console.log(res.data);
-      setSingleStock(res.data);
-    });
-  }
+
 
   const sendData = (values) => {
 
-    const id = localStorage.getItem("myUserId");
+  
 
     if (values?.warehouseName?.value?.length === 0) {
 
@@ -91,7 +82,7 @@ function EStock() {
 
       const params = {
 
-    "sellerID":id,
+    "storeID":id,
      "warehouseName":values.warehouseName.value,
      "width":values.width.value,
       "height":values.height.value,
@@ -105,9 +96,41 @@ function EStock() {
         .post(`${ApiUrl}/e-stock/create`, params)
 
         .then((res) => {
-          console.log(res.data);
 
-          toast('E stock created successfully!')
+                 console.log(res.data);
+
+
+                 if(res.data.status==="success"){
+                  const param = {  
+
+                    storeID: res.data.data.storeID,
+                    rackcouts:res.data.data.stockCapacity,
+                  };
+                  console.log(param);
+                  axios
+                    .post(`${ApiUrl}/e-rack/create`, param)
+            
+                    .then((res) => {
+                      console.log(res.data);
+            
+                    
+            
+                     
+                    });
+                  
+        
+                  toast('E stock created successfully!')
+
+                 }
+
+       
+
+
+
+
+
+
+
         });
     }
   };
@@ -119,7 +142,7 @@ function EStock() {
 
       const params = {
 
-    "sellerID":serId,
+    "id":sellerid,
      "warehouseName":values.warehouseName.value,
      "width":values.width.value,
       "height":values.height.value,
@@ -130,12 +153,42 @@ function EStock() {
 
       }
       axios
-        .post(`${ApiUrl}/e-stock/create`, params)
+        .put(`${ApiUrl}/e-stock/updateByID`, params)
 
         .then((res) => {
           console.log(res.data);
 
-          toast('E stock created successfully!')
+
+
+          
+
+          if(res.data.status==="success"){
+            const param = {  
+
+              storeID: res.data.data.storeID,
+              rackcouts:res.data.data.stockCapacity,
+            };
+            console.log(param);
+            axios
+              .put(`${ApiUrl}/e-rack/updateById`, param)
+      
+              .then((res) => {
+                console.log(res.data);
+      
+              
+      
+               
+              });
+            
+  
+        
+
+           }
+
+          toast('E stock update successfully!')
+
+
+    
         });
     
   };
@@ -156,15 +209,14 @@ function EStock() {
               
             );
 
-            axios.get(`${ApiUrl}/e-stock/getAll`).then((res) => {
-              console.log(res.data);
-              setStocks(res.data);
-              console.log(stocks);
-            });
+            
 
             toast(
               "e-stock deleted successfully!"
             );
+
+
+
           });
       },
     });
@@ -186,35 +238,11 @@ function EStock() {
 
                 <div className="min-box  border">
                   <div className="products-actions d-flex p-4">
-                    <div className="imort-product ">
-                      <div className="btn-product d-flex">
-                        <div className="imp-btn">
-                          <button className="p-btn-2">
-                            <BiExport />
-                            <span className="px-1">Export</span>
-                          </button>
-                        </div>
-                        <div className="exp-btn px-3">
-                          <button className="p-btn">
-                            <BiImport />
-                            <span className="px-1">Import</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                   
                     <div className="action-btn">
                       <div className="actions d-flex">
                         <div className="Bulk-btn">
-                          <button
-                            className="bulk-btn"
-                            type="button"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasRight"
-                            aria-controls="offcanvasRight"
-                          >
-                            <FiEdit />
-                            <span className="px-1">Bulk Action</span>
-                          </button>
+                         
 
                           <div
                             className="offcanvas offcanvas-end"
@@ -450,6 +478,8 @@ function EStock() {
                                   className="form-control-input"
                                  
                                   placeholder="WareHouse Name"
+
+                                  defaultValue={singleStock?.warehouseName}
                                 />
                               </div>
                             </div>
@@ -472,6 +502,8 @@ function EStock() {
                                   className="form-control-input"
                                  
                                   placeholder="WareHouse Weight"
+                                  
+                                  defaultValue={singleStock?.width}
                                 />
                               </div>
                             </div>
@@ -492,6 +524,8 @@ function EStock() {
                                   className="form-control-input"
                                  
                                   placeholder="WareHouse Height"
+                                  
+                                  defaultValue={singleStock?.height}
                                 />
                               </div>
                             </div>
@@ -512,6 +546,8 @@ function EStock() {
                                   className="form-control-input"
                            
                                   placeholder="Stock Capacity"
+                                     
+                                  defaultValue={singleStock?.stockCapacity}
                                 />
                               </div>
                             </div>
@@ -532,6 +568,8 @@ function EStock() {
                                   className="form-control-input"
                            
                                   placeholder="Address"
+                                     
+                                  defaultValue={singleStock?.address}
                                 />
                               </div>
                             </div>
@@ -585,17 +623,7 @@ function EStock() {
                             {/* Canvas */}
                           </div>
                         </div>
-                        <div className="Del-btn px-3">
-                          <button
-                            className="del-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
-                          >
-                            <RiDeleteBinLine />
-                            <span className="px-1">Delete</span>
-                          </button>
-                        </div>
-                        {/* Modal-Del */}
+                       
                         <div
                           class="modal fade"
                           id="exampleModal"
@@ -815,8 +843,20 @@ function EStock() {
                                       <div className="actions d-flex">
                                      
                                     <span
-                                     onClick={() => ournav(`/seller_details/${id}/${item?._id}`)
-                                     }
+                                      onClick={() => {
+                                        // navigate(`/seller_details/${id}/${item?._id}`);
+                                        setSellerID(item?._id)
+                                            
+                                        
+                                        axios.get(`${ApiUrl}/e-stock/getById?id=`+item?._id).then((res) => {
+                                          console.log(res.data,'singleStock');
+                                    
+                                          setSingleStock(res.data);
+                                        });
+
+
+
+                                      }}
                                       data-bs-toggle="offcanvas"
                                       data-bs-target="#offcanvasRightupdate12"
                                       aria-controls="offcanvasRightupdate12"
